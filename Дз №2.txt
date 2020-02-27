@@ -1,0 +1,40 @@
+1. Заходим в каждую директорию 
+cd /home
+cd /proc
+cd ~/etc
+Прописываем везде ls -la для просмотра содержимого
+Через команду less просматриваем файлы
+2. man cat - просмотр справки по cat
+cd ~
+mkdir geekbrains
+cd geekbrains
+cat > file1
+1
+cat > file2
+2
+cat file1 file2 > file3
+cat file3
+mv file3 renamed
+
+3.touch file{10..20}.txt
+mkdir ex3
+mv ./file{10..20}.txt ./ex3
+cd ~
+rm -R geekbrains
+
+4. find . -maxdepth 1 -name ".*" | wc
+у меня получилось 20 скрытый файлов и папок
+
+5. cd /etc 
+cat *.* 2> ~/1.txt
+cat ~/1.txt | wc
+
+у меня получилось 40 файлов, которые не удалось прочитать
+
+6. запускал цикл
+while true ; do echo smth ; done
+смотрел PID через top
+это всегда был pid terminala
+пробовал послать 1, 2, 15, 9 сигналы 
+kill -номер сигнала PID
+Всегда закрывался терминал
