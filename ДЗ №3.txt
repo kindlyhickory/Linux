@@ -1,0 +1,32 @@
+1. mkdir gb
+echo "file1" > /home/efilippov/gb/file1
+cp /home/efilippov/gb/file1 /home/efilippov/gb/file2
+ln -s file1 file3
+ln file1 file4
+ls -lai
+Видим, что айнод у жёсткой ссылки на файл и сам файл совпадают,
+а у символической ссылки и файла не совпадают. Айнода скопированного файла
+отличается, т.к. это совсем новый файл.
+
+2.cd gb
+rename 's/file*/renamed_file/' file*
+ln -s renamed_file1 renamed_file 5
+cd
+mkdir gb2
+mv /home/efilippov/gb/renamed_file{3..5} /home/efilippov/gb2/
+
+3.cd /gb
+touch file{1..2}
+ls -l
+chmod ug+rw,a+r file1
+chmod u+rw,a-r,o-r file2
+
+chmod 664 file1
+chmod 600 file2
+
+4.sudo su
+groupadd kindly --gid 7777
+useradd -g 7777 -s /bin/bash -d /home/kindly -m -c 'userk' kindly
+passwd kindly
+usermod -aG sudo kindly
+либо отредактировать файл /etc/sudoers
