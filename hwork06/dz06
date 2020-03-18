@@ -1,0 +1,62 @@
+1. 
+1.1 sudo ufw allow 80
+    sudo ufw allow 443
+1.2 sudo apt-get install nginx
+    sudo su
+vim /etc/nginx/nginx.conf - подправили строку, где указывается какие файлы подхватывать
+vim /etc/nginx/conf.d/kindl.ru
+Конфиг вирутального хоста
+server {
+        listen 80 default_server;
+	listen [::]:80 default_server;
+
+        server_name kindl.ru;
+
+        location / {
+	if ($http_user != '' ) {
+		return 200 "Hi $http_user";
+	} 
+	return 400 "Not found";
+        }
+        location /admin {
+           return 200 "admin";
+ 	}
+}
+
+vim/etc/nginx/sites-enabled/default убрали default_server, чтобы он не открывался при localhost
+
+curl -H "user: kindlgb" http://localhost 
+
+2.
+2.1 Самоподписанный сертификат ssl - это сертификат открытого ключа, который подписал и создал
+сам пользователь этого ключа, т.е. то лицо, которое идентифицирует этот ключ. Такой сертификат применим только,/
+когда обмен происходит между пользователями, которые знают об этом сертификате и подтвердили его.
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout
+/etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt - генерируем файлы ключа и сертификата
+
+sudo vim /etc/nginx/snippets/self-signed.conf - создаем конфиг, который показывает,
+где хранятся сертификат и ключ
+
+sudo vim /etc/nginx/snippets/ssl-params.conf - создаем конфиг сертификата
+
+sudo vim /etc/nginx/sites-available/default - настраиваем блоки server. Добавляем server_name ip
+и настроим переадресацию 301, так же раскоментим прослушку 443 порта
+sudo ufw app list
+sudo ufw status
+sudo ufw allow 'Nginx Full'
+sudo ufw delete allow 'Nginx HTTP'
+настраиваем брандмауэ для поддержки ssl трафика
+
+sudo nginx -t
+sudo systemctl restart nginx
+
+далее заходим через браузер на сервер, открывая  ссылку https://192.168.0.42
+
+
+Браузер предупреждает, что система компьютера не доверяет сертификату безопасности и что у меня
+могу похитить данные, но можно это отключить предупреждения системы безопасности.
+
+Симметричное шифрование требутся для более быстрого обмена данными, но асимметричное шифрование так же требуется для того, чтобы изначально получить публичный ключ симметричного шифрования
+от пользователя для дальнейшего защищенного обмена данными. Можно было бы пользоваться 
+в двустороннем порядке асимметричным шифрованием, но таким образом обмен данными был бы
+долгим и требовательным к компьютеру.
